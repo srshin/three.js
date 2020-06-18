@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset=UTF-8 />
+    <style>
+        body {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            }
+    </style>
+  </head>
+  <body>
+    <script type="module">
+
+        import * as THREE from '../build/three.module.js';
+        import { OrbitControls } from './jsm/controls/OrbitControls.js';
+
+      let scene, camera, renderer;
+
+      function init() {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(55,window.innerWidth/window.innerHeight,45,30000);
+        camera.position.set(-900,-200,-900);
+
+        renderer = new THREE.WebGLRenderer({antialias:true});
+        renderer.setSize(window.innerWidth,window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+				let controls = new OrbitControls( camera, renderer.domElement );
+        controls.addEventListener('change', renderer);
+        controls.minDistance = 500;
+        controls.maxDistance = 1500;
+        
+        let materialArray = [
+            new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/cube/Bridge2/posx.jpg'), side:THREE.DoubleSide} ), //RIGHT
+            new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load('textures/cube/Bridge2/posx.jpg'), side:THREE.DoubleSide} ), //LEFT
+            new THREE.MeshPhongMaterial({map: new THREE.TextureLoader().load('textures/cube/Bridge2/posx.jpg'), side:THREE.DoubleSide} ), //TOP
+            new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load('textures/cube/Bridge2/posx.jpg'), side:THREE.DoubleSide} ), //BOTTOM
+            new THREE.MeshPhongMaterial({map: new THREE.TextureLoader().load('textures/cube/Bridge2/posx.jpg'), side:DoubleSide} ), //FRONT
+            new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/cube/Bridge2/posx.jpg'), side:THREE.FrontSide} ) //BACK
+        ];
+
+        let skyboxGeo = new THREE.BoxGeometry( 10000, 10000, 10000);
+        let skybox = new THREE.Mesh( skyboxGeo, materialArray );
+        scene.add( skybox );  
+        animate();
+      }
+      function animate() {
+        renderer.render(scene,camera);
+        requestAnimationFrame(animate);
+      }
+      init();
+    </script>
+  </body>
+</html>

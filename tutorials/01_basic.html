@@ -1,0 +1,71 @@
+<html>
+	<head>
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+			canvas { display: block; }
+		</style>
+	</head>
+	<body>
+		<script type="module">
+            import * as THREE from '../build/three.module.js';
+
+            ///////////////////create scene, camera, renderer
+            //render the scene with camera
+
+            var scene = new THREE.Scene();
+
+            //perspective camera
+            //1.field of view (FOV)  : 각도
+            //2. aspect of ratio : 화면 비율
+            //3. near clipping plane
+            //4. far clipping plane
+            //near와 far사이에 있는 물체만 render됨. 
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+
+            //renderer 
+            // .setSize : render할 영역 설정
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+            //HTML document에 renderer element를 붙임 : scene 보여주기 위해 
+			document.body.appendChild( renderer.domElement );
+
+            //////////////보여줄 대상 만들기
+            //geometry 생성 :기하학적 모형
+            //boxgeometry: 육면체 생성 
+            //vertices (points)
+            //faces
+
+			var geometry = new THREE.BoxGeometry();
+
+            //material : object의 성질 
+            //MeshBasicMaterial : 기본형 (초록색)
+			var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+
+            //Mesh : Object. geometry와 material로 구성
+			var cube = new THREE.Mesh( geometry, material );
+
+            //Object를 scene에 붙이기
+            //default로 0,0,0에 위치함. 
+			scene.add( cube );
+
+            //camera 위치 설정
+            //object와 camera 위치가 같으면 object가 보이지 않음. 
+			camera.position.z = 5;
+
+            //실제 rendering function 만들기 
+			var animate = function () {
+                //scene을 1초에 60번 rendering
+				requestAnimationFrame( animate );
+
+				cube.rotation.x += 0.01;
+				cube.rotation.y += 0.01;
+
+				renderer.render( scene, camera );
+			};
+
+			animate();
+		</script>
+	</body>
+</html>
