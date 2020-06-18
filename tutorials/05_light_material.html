@@ -1,3 +1,4 @@
+<!-- light와 material을 이용해 3d 효과내기  -->
 <html lang="en">
 	<head>
 		<title>three.js webgl - simple text from json</title>
@@ -9,20 +10,18 @@
 				background-color: #f0f0f0;
 				color: #444;
 			}
+			a {
+				color: #08f;
+			}
 		</style>
 	</head>
 	<body>
-		<div id="info">
-			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - simple text from json fonts
-		</div>
-
 		<script type="module">
 
 			import * as THREE from '../build/three.module.js';
-
 			import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
 
-			var camera, scene, renderer;
+			var camera, scene, renderer, mesh;
 
 			init();
 			animate();
@@ -35,29 +34,20 @@
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0x0e0e0e );
 
-				//font loader 
-				//font : json format. array of shapes representing the font
-				//http://gero3.github.io/facetype.js/에서 converting가능.  
-				var loader = new THREE.FontLoader();
-				loader.load( '../examples/fonts/helvetiker_regular.typeface.json', function ( font ) {
+				//light 추가 
+				const color = 0xFFFFFF;
+				const intensity = 1;
+				const light = new THREE.DirectionalLight(color, intensity);
+				light.position.set(-1, 2, 4);
+				scene.add(light);
 
-					var textGeo = new THREE.TextBufferGeometry( "THREE.JS", {
-						font: font,
-						size: 1,
-						height: 0.2,
-					} );
-					//text의 원하는 위치 x좌표 중간에 오도록 값을 계산 
-					textGeo.computeBoundingBox();
-					var centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
+				//mesh 추가 
+				const geometry = new THREE.BoxGeometry(1, 1, 1);
+				// PhoneMaterial : 빛 반사하는 성질
+  				const material = new THREE.MeshPhongMaterial({color: 0x44aa88});  // greenish blue
+				mesh = new THREE.Mesh(geometry, material)	
+				scene.add( mesh );
 
-					var textMaterial = new THREE.MeshBasicMaterial( { color: 0xaaaaaa } );
-
-					var mesh = new THREE.Mesh( textGeo, textMaterial );
-					mesh.position.x = centerOffset;
-					mesh.position.y = 0;
-					
-					scene.add( mesh );
-				} ); //end load function
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
@@ -88,6 +78,9 @@
 
 			function animate() {
 				requestAnimationFrame( animate );
+				mesh.rotation.x += 0.01;
+				mesh.rotation.y += 0.01;
+
 				render();
 			}
 
