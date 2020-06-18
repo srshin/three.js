@@ -1,0 +1,156 @@
+<!-- basic THREE.js 기본 기능 구현  -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js crash course</title>
+    <style>
+        body { 
+            margin: 0 
+        }
+        canvas {
+            width : 100%; 
+            height : 100%;
+        }
+    </style>
+</head>
+<body>
+        <script type="module"> 
+        import * as THREE from './build/three.module.js';
+        import { OrbitControls } from './js/OrbitControls.js';
+		import Stats from './js/stats.module.js';
+        import { AnaglyphEffect } from './js/AnaglyphEffect.js';
+
+        let scene = new THREE.Scene(); 
+
+        let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 3;
+
+        let renderer = new THREE.WebGLRenderer( { antialias: true } ); 
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        let stats = new Stats();
+		document.body.appendChild( stats.dom );
+
+        let effect = new AnaglyphEffect(renderer);
+        effect.setSize(window.innerWidth || 2, window.innerHeight || 2); 
+
+        //axis helper 
+        //yellow: y, red:x, blue: z
+        let axesHelper = new THREE.AxesHelper(3 );
+        scene.add( axesHelper );				
+        
+        //grid helper
+        var helper = new THREE.GridHelper( 3, 3);
+        scene.add( helper );
+
+        //create shape
+        let geometry = new THREE.BoxGeometry(1,1,1);
+
+        //create material, color, image texture
+        // let material = new THREE.MeshBasicMaterial({
+        //     color: 0xffffff,
+        //     wireframe: true,
+        // }); 
+
+        //texture:  각각 다른 texture 적용하기
+        //DoubleSide: 바깥쪽과 안쪽 모두 
+        var textureLoader = new THREE.TextureLoader();
+        textureLoader.load( './images/2294472375_24a3b8ef46_o.jpg', function ( texture ) {
+            texture.mapping = THREE.UVMapping;
+				// background
+				var options = {
+					generateMipmaps: true,
+					minFilter: THREE.LinearMipmapLinearFilter,
+					magFilter: THREE.LinearFilter
+				};
+				scene.background = new THREE.WebGLCubeRenderTarget( 1024, options ).fromEquirectangularTexture( renderer, texture );
+
+        } );
+
+        let cubeMaterials = [
+            new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('./images/dog1.png'), side:THREE.FrontSide} ), //RIGHT
+            new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load('./images/dog2.png'), side:THREE.DoubleSide} ), //LEFT
+            new THREE.MeshPhongMaterial({map: new THREE.TextureLoader().load('./images/dog3.png'), side:THREE.BackSide} ), //TOP
+            new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load('./images/dog4.png'), side:THREE.DoubleSide} ), //BOTTOM
+            new THREE.MeshPhongMaterial({color: 0xff00ff, map: new THREE.TextureLoader().load('./images/dogAll.png'), side:THREE.BackSide} ), //FRONT
+            new THREE.MeshBasicMaterial({color:0xffffff, side:THREE.FrontSide} ) //BACK
+        ];
+
+        let cube = new THREE.Mesh(geometry, cubeMaterials);
+        scene.add(cube);
+
+        //mesh2
+        let geometry2 = new THREE.CubeGeometry(1,10,10);
+        let material2 = new THREE.MeshLambertMaterial ({map:new THREE.TextureLoader().load('./images/brick_bump.jpg'), side:THREE.DoubleSide});
+        let cube2 = new THREE.Mesh(geometry2, material2);
+        cube2.position.x = 5;
+        scene.add(cube2);
+
+
+        //light
+        let ambientLight = new THREE.AmbientLight(0x0ffaff, 0.8);
+        scene.add(ambientLight);
+
+        let pointLight = new THREE.PointLight(0xf0f0f0, 4, 100);
+        scene.add(pointLight);
+
+        let pointLight2 = new THREE.PointLight(0x777777, 1, 50);
+        scene.add(pointLight2);
+
+        var directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+        directionalLight.position.set (0,1,0);
+        scene.add(directionalLight);
+
+
+        //loader json format file
+        var loader = new THREE.ObjectLoader(); 
+        loader.load('./model/teapot-claraio.json', function(object) {
+            scene.add(object);
+        });
+
+
+
+
+        window.addEventListener('resize', ()=>{
+            camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            effect.setSize (window.innerWidth, window.innerHeight);
+        });
+        let controls = new OrbitControls(camera, renderer.domElement);
+
+        //game logic
+        const update= function() {
+            // cube.rotation.x +=0.01;
+            // cube.rotation.y +=0.005;
+            var time = Date.now() * 0.0005;
+            pointLight.position.x = Math.sin(time  )*30;
+            pointLight.position.y = Math.cos(time * 0.5 )*30;
+            pointLight.position.z = Math.sin(time * 0.7 )*30;
+
+
+        };
+
+        //draw scene
+        const render = function() {
+            // renderer.render(scene, camera);
+            effect.render(scene, camera);
+        }
+
+        //run game loop (update, render, repeat)
+        const GameLoop = function() {
+            requestAnimationFrame(GameLoop);
+            update();
+            render();
+			stats.update();
+            
+
+        };
+        GameLoop();
+    </script>
+    
+</body>
+</html>
