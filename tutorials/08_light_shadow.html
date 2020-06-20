@@ -1,0 +1,152 @@
+<html>
+
+<head>
+    <title>Example 01.05 - Control gui</title>
+    <style>
+        body {
+            /* set margin to 0 and overflow to hidden, to go fullscreen */
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+<div id="Stats-output">
+</div>
+<!-- Div which will hold the Output -->
+<div id="WebGL-output">
+</div>
+
+<!-- Javascript code that runs our Three.js examples -->
+<script type="module">
+
+    import * as THREE from '../build/three.module.js';
+    import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
+    import {GUI} from '../examples/jsm/libs/dat.gui.module.js';
+    import { ShadowMapViewer } from '../examples/jsm/utils/ShadowMapViewer.js';
+
+    // once everything is loaded, we run our Three.js stuff.
+    function init() {
+
+        // create a scene, that will hold all our elements such as objects, cameras and lights.
+        var scene = new THREE.Scene();
+        scene.background = new THREE.Color( 0xeeeeee );
+
+        // create a camera, which defines where we're looking at.
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        // create a render and set the size
+        var renderer = new THREE.WebGLRenderer({ antialias: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.BasicShadowMap;
+
+        // create the ground plane
+        var planeGeometry = new THREE.PlaneGeometry(60, 20, 1, 1);
+        var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
+        var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.receiveShadow = true;
+
+        // rotate and position the plane
+        plane.rotation.x = -0.5 * Math.PI;
+        plane.position.x = 15;
+        plane.position.y = 0;
+        plane.position.z = 0;
+
+        // add the plane to the scene
+        scene.add(plane);
+
+        // create a cube
+        var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+        var cubeMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
+        var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        cube.castShadow = true;
+
+        // position the cube
+        cube.position.x = -4;
+        cube.position.y = 3;
+        cube.position.z = 0;
+
+        // add the cube to the scene
+        scene.add(cube);
+
+        // position and point the camera to the center of the scene
+        camera.position.x = -30;
+        camera.position.y = 40;
+        camera.position.z = 30;
+        camera.lookAt(scene.position);
+
+
+        // add spotlight for the shadows
+        var spotLight = new THREE.SpotLight(0xffffff);
+        spotLight.name = 'Spot Light';
+        spotLight.angle = Math.PI / 5;
+        spotLight.penumbra = 0.3;
+        spotLight.position.set( 10, 10, 5 );
+        spotLight.castShadow = true;
+        spotLight.shadow.camera.near = 8;
+        spotLight.shadow.camera.far = 30;
+        spotLight.shadow.mapSize.width = 1024;
+        spotLight.shadow.mapSize.height = 1024;
+        scene.add( spotLight );
+
+        scene.add( new THREE.CameraHelper( spotLight.shadow.camera ) );
+        
+        let spotLightShadowMapViewer = new ShadowMapViewer( spotLight );
+        var size = window.innerWidth * 0.15;
+        spotLightShadowMapViewer.size.set( size, size );
+		spotLightShadowMapViewer.position.set( size + 20, 10 );
+
+        // add the output of the renderer to the html element
+        document.getElementById("WebGL-output").appendChild(renderer.domElement);
+
+        var rotationControls = new function () {
+            this.rotationSpeed = 0.01;
+        };
+
+        var gui = new GUI();
+        gui.add(rotationControls, 'rotationSpeed', 0, 0.5);
+
+        var controls = new OrbitControls( camera, renderer.domElement );
+		controls.target.set( 0, 0, 0 );
+		controls.update();
+
+        //add grid helper 
+        // The X axis is red. The Y axis is green. The Z axis is blue.
+		var helper = new THREE.GridHelper( 5,5 );
+		scene.add( helper );
+			
+		//add axes helper
+		var axesHelper = new THREE.AxesHelper(10);
+        scene.add( axesHelper );
+        				
+		window.addEventListener( 'resize', onWindowResize, false );
+
+        render();
+
+        function render() {
+            // rotate the cube around its axes
+            cube.rotation.x += rotationControls.rotationSpeed;
+            cube.rotation.y += rotationControls.rotationSpeed;
+            cube.rotation.z += rotationControls.rotationSpeed;
+
+            // render using requestAnimationFrame
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+            lightShadowMapViewer.render( renderer );
+        }
+
+        function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
+
+    }
+    window.onload = init;
+
+</script>
+</body>
+</html>
