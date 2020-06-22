@@ -1,4 +1,6 @@
-<!-- texture 효과  -->
+<!-- texture 효과  
+texture를 사용하여 백그라운드를 그리는 방법을 배운다. 
+면에 따라 각각 다른 texture를 사용한다. -->
 <html lang="en">
 	<head>
 		<title>three.js webgl - simple text from json</title>
@@ -29,7 +31,7 @@
 			function init( ) {
 
 				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
-				camera.position.set( 0, 0, 5 );
+				camera.position.set( 0, 0, 20 );
 
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0x0e0e0e );
@@ -41,10 +43,17 @@
 				light.position.set(-1, 2, 4);
 				scene.add(light);
 
-				const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-				//mesh 추가
-				const texture = new  THREE.TextureLoader().load('../examples/textures/brick_bump.jpg');
-				let material =  new THREE.MeshBasicMaterial({map: texture});
+				const geometry = new THREE.BoxBufferGeometry(10, 10, 10);
+				//mesh 추가 
+				//texture를 각 면에 따라서 다르게 입힐 때 
+				let material = [
+		            new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('../examples/textures/cube/skyboxsun25deg/px.jpg'), side:THREE.DoubleSide} ), //RIGHT
+        		    new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('../examples/textures/cube/skyboxsun25deg/nx.jpg'), side:THREE.DoubleSide} ), //LEFT
+            		new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('../examples/textures/cube/skyboxsun25deg/py.jpg'), side:THREE.DoubleSide} ), //TOP
+            		new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('../examples/textures/cube/skyboxsun25deg/ny.jpg'), side:THREE.DoubleSide} ), //BOTTOM
+            		new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('../examples/textures/cube/skyboxsun25deg/pz.jpg'), side:THREE.DoubleSide} ), //FRONT
+            		new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('../examples/textures/cube/skyboxsun25deg/nz.jpg'), side:THREE.DoubleSide} ) //BACK
+        		];
 				mesh = new THREE.Mesh(geometry, material)	
 				scene.add( mesh );
 
@@ -59,12 +68,12 @@
 				controls.update();
 
 				//add grid helper 
-				var helper = new THREE.GridHelper( 5,5 );
-				helper.rotation.x = Math.PI / 2;
-				scene.add( helper );
+				// var helper = new THREE.GridHelper( 20, 20 );
+				// helper.rotation.x = Math.PI / 2;
+				// scene.add( helper );
 			
 				//add axes helper
-				var axesHelper = new THREE.AxesHelper(10);
+				var axesHelper = new THREE.AxesHelper(20);
 				scene.add( axesHelper );				
 				window.addEventListener( 'resize', onWindowResize, false );
 
@@ -78,8 +87,8 @@
 
 			function animate() {
 				requestAnimationFrame( animate );
-				mesh.rotation.x += 0.01;
-				mesh.rotation.y += 0.01;
+				// mesh.rotation.x += 0.01;
+				// mesh.rotation.y += 0.01;
 
 				render();
 			}
