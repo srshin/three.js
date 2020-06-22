@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - materials - channels</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <style>
+            body {
+                /* set margin to 0 and overflow to hidden, to go fullscreen */
+                margin: 0;
+                overflow: hidden;
+            }
+        </style>
+        </head>
+	<body>
+
+		<script type="module">
+
+			import * as THREE from '../build/three.module.js';
+
+			import Stats from '../examples/jsm/libs/stats.module.js';
+
+			import { GUI } from '../examples/jsm/libs/dat.gui.module.js';
+			import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
+
+			var stats;
+
+			var camera, scene, renderer;
+
+			var params = {
+				camera: 'ortho',
+			};
+
+			var cameraOrtho, cameraPerspective;
+			var controlsOrtho, controlsPerspective;
+
+			var frustumSize = 5; // of camera frustum
+
+			init();
+			animate();
+			initGui();
+
+			// Init gui
+			function initGui() {
+
+				var gui = new GUI();
+				gui.add( params, 'camera', [ 'perspective', 'ortho' ] );
+
+			}
+
+			function init() {
+
+				var container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				renderer = new THREE.WebGLRenderer();
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				container.appendChild( renderer.domElement );
+
+				//
+
+				scene = new THREE.Scene();
+
+				var aspect = window.innerWidth / window.innerHeight;
+				cameraPerspective = new THREE.PerspectiveCamera( 45, aspect, 1, 1000 );
+				cameraPerspective.position.z = 10;
+				scene.add( cameraPerspective );
+
+				cameraOrtho = new THREE.OrthographicCamera( - frustumSize * aspect, frustumSize * aspect, frustumSize, - frustumSize, 1, 20 );
+				cameraOrtho.position.z = 10;
+				scene.add( cameraOrtho );
+
+				camera = cameraPerspective;
+
+				controlsPerspective = new OrbitControls( cameraPerspective, renderer.domElement );
+				controlsPerspective.minDistance = 10;
+				controlsPerspective.maxDistance = 200;
+				controlsPerspective.enablePan = false;
+				controlsPerspective.enableDamping = true;
+
+				controlsOrtho = new OrbitControls( cameraOrtho, renderer.domElement );
+				controlsOrtho.minZoom = 0.5;
+				controlsOrtho.maxZoom = 1.5;
+                controlsOrtho.enablePan = false;
+                controlsOrtho.enableRotate = false;
+                
+				controlsOrtho.enableDamping = true;
+
+				// lights
+
+				var ambientLight = new THREE.AmbientLight( 0xffffff, 0.1 );
+				scene.add( ambientLight );
+
+				var pointLight = new THREE.PointLight( 0xff0000, 0.5 );
+				pointLight.position.z = 2500;
+				scene.add( pointLight );
+
+				var pointLight2 = new THREE.PointLight( 0xff6666, 1 );
+				camera.add( pointLight2 );
+
+				var pointLight3 = new THREE.PointLight( 0x0000ff, 0.5 );
+				pointLight3.position.x = - 1000;
+				pointLight3.position.z = 1000;
+				scene.add( pointLight3 );
+
+
+                var helper = new THREE.GridHelper( 10, 10 );
+                helper.rotation.x = Math.PI / 2;
+                scene.add( helper );
+            
+                //add axes helper
+                // The X axis is red. The Y axis is green. The Z axis is blue.
+                var axesHelper = new THREE.AxesHelper(5);
+                scene.add( axesHelper );				
+
+
+				//mesh 추가 
+				const geometry = new THREE.BoxGeometry(1, 1, 1);
+				// PhoneMaterial : 빛 반사하는 성질
+  				const material = new THREE.MeshPhongMaterial({color: 0x44aa88});  // greenish blue
+				var mesh = new THREE.Mesh(geometry, material)	
+				scene.add( mesh );
+				//
+
+				stats = new Stats();
+				container.appendChild( stats.dom );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				var width = window.innerWidth;
+				var height = window.innerHeight;
+				var aspect = window.innerWidth / window.innerHeight;
+
+				camera.aspect = aspect;
+
+				camera.left = - frustumSize * aspect;
+				camera.right = frustumSize * aspect;
+				camera.top = frustumSize;
+				camera.bottom = - frustumSize;
+
+				camera.updateProjectionMatrix();
+				renderer.setSize( width, height );
+
+			}
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				stats.begin();
+				render();
+				stats.end();
+
+			}
+
+			function render() {
+
+				switch ( params.camera ) {
+
+					case 'perspective':
+						camera = cameraPerspective;
+						break;
+					case 'ortho':
+						camera = cameraOrtho;
+						break;
+
+				}
+
+				controlsPerspective.update();
+				controlsOrtho.update(); // must update both controls for damping to complete
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+
+	</body>
+
+</html>
