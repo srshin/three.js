@@ -28,10 +28,10 @@
 			function main() {
 				let mesh; 
 				const canvas = document.querySelector('#c');
-				const renderer = new THREE.WebGLRenderer({canvas});
+				const renderer = new THREE.WebGLRenderer({canvas });
 
 				const camera = new THREE.PerspectiveCamera( 45, 2, 0.1, 100 );
-				camera.position.set(0, 10, 20);
+				camera.position.set(10, 10, 40);
 
 				const controls = new OrbitControls(camera, canvas);
 				controls.target.set(0, 5, 0);
@@ -85,19 +85,7 @@
 				mesh.position.set(-sphereRadius - 1, sphereRadius + 2, 0);
 				scene.add(mesh);
 
-				//gui helper 추가 
-				class ColorGUIHelper {
-					constructor(object, property) {
-						this.object = object;
-						this.property = property;
-					}
-					get value() {
-						return `#${this.object[this.property].getHexString()}`;
-					}
-					set value(hexString) {
-						this.object[this.property].set(hexString);
-					}
-				}
+
 
 				//주변광 추가 
 				const color = 0xFFFFFF;
@@ -107,9 +95,14 @@
 
 				//gui 추가 
 				const gui = new GUI();
-				//color picker 추가 
-				gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color menu');
-				gui.add(light, 'intensity', 0, 2, 0.01);
+				var params = {
+					'light color': light.color.getHex(),
+					intensity: light.intensity,
+				};
+
+				gui.addColor( params, 'light color' ).onChange( function ( val ) { light.color.setHex( val ); });
+				gui.add( params, 'intensity', 0, 2 ).onChange( function ( val ) {  light.intensity = val; });
+
 
 				function resizeRendererToDisplaySize(renderer) {
 					const canvas = renderer.domElement;
@@ -128,7 +121,7 @@
 					requestAnimationFrame(render);
 				}
 
-				requestAnimationFrame(render);
+				render();
 			}
 
 			main();

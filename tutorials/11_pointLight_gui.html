@@ -1,3 +1,4 @@
+<!-- gui로 parameter를 조정하면서 spotlight이해하기   -->
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -23,7 +24,7 @@
 			var gui;
 
 			init();
-			render();
+			animate();
 
 			function init() {
 
@@ -85,6 +86,8 @@
 
 				controls.target.copy( mesh.position );
 				controls.update();
+
+				//gui 추가 
 				gui = new GUI();
 				var params = {
 					'light color': spotLight.color.getHex(),
@@ -95,6 +98,14 @@
 					decay: spotLight.decay
 				};
 
+				gui.addColor( params, 'light color' ).onChange( function ( val ) { spotLight.color.setHex( val ); });
+				gui.add( params, 'intensity', 0, 2 ).onChange( function ( val ) {  spotLight.intensity = val; });
+				gui.add( params, 'distance', 0, 40 ).onChange( function ( val ) { spotLight.distance = val; });
+				gui.add( params, 'angle', 0, Math.PI / 6 ).onChange( function ( val ) {   spotLight.angle = val; });
+				gui.add( params, 'penumbra', 0, 1 ).onChange( function ( val ) { spotLight.penumbra = val; });
+				gui.add( params, 'decay', 1, 2 ).onChange( function ( val ) { spotLight.decay = val; });
+				gui.open();
+
 				var helper = new THREE.GridHelper( 10, 10 );
 	        	helper.rotation.x = Math.PI / 2;
     	    	scene.add( helper );
@@ -103,39 +114,7 @@
 				// The X axis is red. The Y axis is green. The Z axis is blue.
 				scene.add( new THREE.AxesHelper( 10 ) );
 
-				gui.addColor( params, 'light color' ).onChange( function ( val ) {
-					spotLight.color.setHex( val );
-					render();
-				} );
-
-				gui.add( params, 'intensity', 0, 2 ).onChange( function ( val ) {
-					spotLight.intensity = val;
-					render();
-				} );
-
-				gui.add( params, 'distance', 0, 40 ).onChange( function ( val ) {
-					spotLight.distance = val;
-					render();
-				} );
-
-				gui.add( params, 'angle', 0, Math.PI / 6 ).onChange( function ( val ) {
-					spotLight.angle = val;
-					render();
-				} );
-
-				gui.add( params, 'penumbra', 0, 1 ).onChange( function ( val ) {
-					spotLight.penumbra = val;
-					render();
-				} );
-
-				gui.add( params, 'decay', 1, 2 ).onChange( function ( val ) {
-					spotLight.decay = val;
-					render();
-				} );
-				gui.open();
-
 				window.addEventListener( 'resize', onResize, false );
-
 			}
 
 			function onResize() {
@@ -144,20 +123,18 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 			}
 
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+				stats.update();
+			}
+
 			function render() {
 				lightHelper.update();
 				shadowCameraHelper.update();
 				renderer.render( scene, camera );
-
-			}
-
-			function buildGui() {
-
-
 			}
 
 		</script>
-
 	</body>
-
 </html>
