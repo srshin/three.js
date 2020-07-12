@@ -25,9 +25,10 @@ MeshPhongMaterial을 사용하는 법을 배운다. -->
 			import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
 
 			var camera, scene, renderer, mesh;
-
+            var axis = new THREE.Vector3(0.5,0.5,0);
+            var rad=0;
 			init();
-			animate();
+			// animate();
 
 			function init( ) {
 
@@ -69,7 +70,8 @@ MeshPhongMaterial을 사용하는 법을 배운다. -->
 				//add axes helper
 				var axesHelper = new THREE.AxesHelper(5);
 				scene.add( axesHelper );				
-				window.addEventListener( 'resize', onWindowResize, false );
+                window.addEventListener( 'resize', onWindowResize, false );
+                render();
 
 			} // end init
 
@@ -81,13 +83,16 @@ MeshPhongMaterial을 사용하는 법을 배운다. -->
 
 			function animate() {
 				requestAnimationFrame( animate );
-				mesh.rotation.x += 0.01;
-				mesh.rotation.y += 0.01;
+				// mesh.rotation.x += 0.01;
+				mesh.rotation.z += 0.01;
+                // mesh.rotation.y += 0.01;
 
 				render();
 			}
 
 			function render() {
+                var degreeX = 45;
+				mesh.rotation.z += THREE.Math.degToRad(degreeX);
 				renderer.render( scene, camera );
 			}
 

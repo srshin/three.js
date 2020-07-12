@@ -2,7 +2,7 @@
 three.js의 기본이 되는 좌표를 핸들링하는 법을 배우고 이를 이용하여 선을 그려본다. -->
 <html>
 	<head>
-		<title>Draw Lines</title>
+		<title>Draw Lines Width</title>
 		<style>
 			body { margin: 0; }
 			canvas { display: block; }
@@ -11,7 +11,9 @@ three.js의 기본이 되는 좌표를 핸들링하는 법을 배우고 이를 �
 	<body>
 		<script type="module">
             import * as THREE from '../build/three.module.js';
-			import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
+            import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
+            import * as MESHLINE from './Three.MeshLine.js';
+            
 
 			var scene = new THREE.Scene();
 
@@ -31,10 +33,12 @@ three.js의 기본이 되는 좌표를 핸들링하는 법을 배우고 이를 �
             points.push( new THREE.Vector3( 0, 1, 0 ) );
             points.push( new THREE.Vector3( 1, 0, 0 ) );
 			var geometry = new THREE.BufferGeometry().setFromPoints( points );
+            var lines = new MESHLINE.MeshLine(); 
+            line.setGeometry(geometry, function(p){return 2});
+            var material = new MESHLINE.MeshLineMaterial({color: 0x00ffff});
+			// var material = new THREE.LineBasicMaterial( { color: 0x00ffff } );
 
-			var material = new THREE.LineBasicMaterial( { color: 0x00ffff } );
-
-			var line = new THREE.Line( geometry, material );
+			var line = new THREE.Mesh( geometry, material );
 			scene.add( line );
 			//add orbit control 
 			var controls = new OrbitControls( camera, renderer.domElement );

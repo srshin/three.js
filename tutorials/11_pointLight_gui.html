@@ -59,8 +59,8 @@
 				spotLight.castShadow = true;
 				spotLight.shadow.mapSize.width = 1024;
 				spotLight.shadow.mapSize.height = 1024;
-				spotLight.shadow.camera.near = 10;
-				spotLight.shadow.camera.far = 200;
+				spotLight.shadow.camera.near = 1;
+				spotLight.shadow.camera.far = 100;
 				scene.add( spotLight );
 
 				lightHelper = new THREE.SpotLightHelper( spotLight );
@@ -72,7 +72,7 @@
 				var material = new THREE.MeshPhongMaterial( { color: 0x808080, dithering: true, side:THREE.DoubleSide} );
 				var geometry = new THREE.PlaneBufferGeometry( 20, 20 );
 				var mesh = new THREE.Mesh( geometry, material );
-				mesh.position.set( 0, 0, -1 );
+				mesh.position.set( 0, 0, 0 );
 				// mesh.rotation.x = - Math.PI * 0.5;
 				mesh.receiveShadow = true;
 				scene.add( mesh );
@@ -80,9 +80,11 @@
 				var material = new THREE.MeshPhongMaterial( { color: 0x4080ff, dithering: true } );
 				var geometry = new THREE.BoxBufferGeometry( 1, 2, 1 );
 				var mesh = new THREE.Mesh( geometry, material );
-				mesh.position.set( 0, 0, 2 );
-				mesh.castShadow = true;
-				scene.add( mesh );
+				mesh.position.set( 0, 0, 0 );
+                mesh.castShadow = true;
+                var group = new THREE.Group();
+                group.add(mesh);
+				scene.add( group );
 
 				controls.target.copy( mesh.position );
 				controls.update();
@@ -126,7 +128,7 @@
 			function animate() {
 				requestAnimationFrame( animate );
 				render();
-				stats.update();
+				// stats.update();
 			}
 
 			function render() {

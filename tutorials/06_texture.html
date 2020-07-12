@@ -40,7 +40,9 @@
 				const intensity = 1;
 				const light = new THREE.DirectionalLight(color, intensity);
 				light.position.set(-1, 2, 4);
-				scene.add(light);
+                // scene.add(light);
+                var plight = new THREE.PointLight( 0xffffff, 0.8 );
+				camera.add( plight );
 
 				const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
 				//mesh 추가

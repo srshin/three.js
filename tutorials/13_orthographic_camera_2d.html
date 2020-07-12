@@ -10,9 +10,27 @@
                 margin: 0;
                 overflow: hidden;
             }
+            .zoom-container {
+                position : absolute;
+                top:50px;
+                font-size: 13px;
+                color: #aaaaaa;
+				right:10px;
+				box-sizing: border-box;
+				z-index:1;
+            }
+            .zoom-button, .navi-button, .select-poi {
+                background: #FFFFFF;
+
+            }
+
         </style>
         </head>
 	<body>
+        <div class="zoom-container">
+            <button id="zoom-in-button" class="zoom-button" type="button" >+</button>
+            <button id="zoom-out-button" class="zoom-button" type="button" >-</button>
+        </div>
 
 		<script type="module">
 
@@ -34,11 +52,29 @@
 			var cameraOrtho, cameraPerspective;
 			var controlsOrtho, controlsPerspective;
 
-			var frustumSize = 5; // of camera frustum
+			var frustumSize = 3; // of camera frustum
 
 			init();
 			animate();
-			initGui();
+            initGui();
+            initZoom();
+            function initZoom() {
+                let zoomInButton = document.getElementById("zoom-in-button");
+                let zoomOutButton = document.getElementById("zoom-out-button");
+                zoomInButton.addEventListener("click", (e) => {
+                    console.log(cameraOrtho)
+                    cameraPerspective.position.z -= 4;
+                    cameraOrtho.zoom *=1.1;
+                    cameraOrtho.updateProjectionMatrix(); 
+                });
+                zoomOutButton.addEventListener("click", (e) => {
+                    console.log(cameraOrtho)
+                    cameraPerspective.position.z += 4;
+                    cameraOrtho.zoom /=1.1;
+                    cameraOrtho.updateProjectionMatrix(); 
+
+                });
+            }
 
 			// Init gui
 			function initGui() {
@@ -67,21 +103,21 @@
 				cameraPerspective.position.z = 10;
 				scene.add( cameraPerspective );
 
-				cameraOrtho = new THREE.OrthographicCamera( - frustumSize * aspect, frustumSize * aspect, frustumSize, - frustumSize, 1, 20 );
-				cameraOrtho.position.z = 10;
+				cameraOrtho = new THREE.OrthographicCamera( - frustumSize * aspect, frustumSize * aspect, frustumSize, - frustumSize, 1, 40 );
+				cameraOrtho.position.z = 39;
 				scene.add( cameraOrtho );
 
 				camera = cameraPerspective;
 
 				controlsPerspective = new OrbitControls( cameraPerspective, renderer.domElement );
-				controlsPerspective.minDistance = 10;
-				controlsPerspective.maxDistance = 200;
+				// controlsPerspective.minDistance = 10;
+				// controlsPerspective.maxDistance = 200;
 				controlsPerspective.enablePan = false;
 				controlsPerspective.enableDamping = true;
 
 				controlsOrtho = new OrbitControls( cameraOrtho, renderer.domElement );
-				controlsOrtho.minZoom = 0.5;
-				controlsOrtho.maxZoom = 1.5;
+				// controlsOrtho.minZoom = 0.5;
+				// controlsOrtho.maxZoom = 1.5;
                 controlsOrtho.enablePan = false;
                 controlsOrtho.enableRotate = false;
                 
