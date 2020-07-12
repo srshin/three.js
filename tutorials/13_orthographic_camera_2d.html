@@ -52,7 +52,7 @@
 			var cameraOrtho, cameraPerspective;
 			var controlsOrtho, controlsPerspective;
 
-			var frustumSize = 3; // of camera frustum
+			var frustumSize = 30; // of camera frustum
 
 			init();
 			animate();
@@ -100,10 +100,10 @@
 
 				var aspect = window.innerWidth / window.innerHeight;
 				cameraPerspective = new THREE.PerspectiveCamera( 45, aspect, 1, 1000 );
-				cameraPerspective.position.z = 10;
+				cameraPerspective.position.z = 100;
 				scene.add( cameraPerspective );
 
-				cameraOrtho = new THREE.OrthographicCamera( - frustumSize * aspect, frustumSize * aspect, frustumSize, - frustumSize, 1, 40 );
+				cameraOrtho = new THREE.OrthographicCamera( - frustumSize * aspect, frustumSize * aspect, frustumSize, - frustumSize, 1, 100 );
 				cameraOrtho.position.z = 39;
 				scene.add( cameraOrtho );
 
