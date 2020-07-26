@@ -40,8 +40,29 @@
 
 			import { GUI } from '../examples/jsm/libs/dat.gui.module.js';
 			import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
+			import { MeshLine, MeshLineMaterial } from "./THREE.MeshLineModule.js";
 
 			var stats;
+            var resolution = new THREE.Vector2( window.innerWidth, window.innerHeight );
+            
+            var colors = [
+                0xed6a5a,
+                0xf4f1bb,
+                0x9bc1bc,
+                0x5ca4a9,
+                0xe6ebe0,
+                0xf0b67f,
+                0xfe5f55,
+                0xd6d1b1,
+                0xc7efcf,
+                0xeef5db,
+                0x50514f,
+                0xf25f5c,
+                0xffe066,
+                0x247ba0,
+                0x70c1b3
+            ];
+
 
 			var camera, scene, renderer;
 
@@ -89,7 +110,7 @@
 				var container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
-				renderer = new THREE.WebGLRenderer();
+				renderer = new THREE.WebGLRenderer({ antialias: true });
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
@@ -107,7 +128,7 @@
 				cameraOrtho.position.z = 39;
 				scene.add( cameraOrtho );
 
-				camera = cameraPerspective;
+				camera = cameraOrtho;
 
 				controlsPerspective = new OrbitControls( cameraPerspective, renderer.domElement );
 				// controlsPerspective.minDistance = 10;
@@ -162,11 +183,35 @@
 				stats = new Stats();
 				container.appendChild( stats.dom );
 
-				//
+                //
+                var line = new THREE.Geometry();
+                line.vertices.push( new THREE.Vector3( -3, -3, 0 ) );
+                line.vertices.push( new THREE.Vector3( 3, -3, 0 ) );
+                makeLine( line, 3 );
+
 
 				window.addEventListener( 'resize', onWindowResize, false );
 
-			}
+            }
+            function makeLine( geo, c ) {
+
+                var g = new MeshLine();
+                g.setGeometry( geo );
+
+                var material = new MeshLineMaterial( {
+                    useMap: false,
+                    color: new THREE.Color( colors[ c ] ),
+                    opacity: 1,
+                    // resolution: resolution,
+                    sizeAttenuation: !false,
+                    lineWidth: 0.1,
+                    near: camera.near,
+                    far: camera.far
+                });
+                var mesh = new THREE.Mesh( g.geometry, material );
+                scene.add( mesh );
+
+                }
 
 			function onWindowResize() {
 
@@ -182,7 +227,9 @@
 				camera.bottom = - frustumSize;
 
 				camera.updateProjectionMatrix();
-				renderer.setSize( width, height );
+                renderer.setSize( width, height );
+                resolution.set( width, height );
+                
 
 			}
 

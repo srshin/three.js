@@ -20,8 +20,8 @@ three.js의 기본이 되는 좌표를 핸들링하는 법을 배우고 이를 �
 
             var scene = new THREE.Scene();
             var camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, .1, 1000 );
-            var camera = new THREE.OrthographicCamera( -1, 1, 1, -1, 1, 1000 );
-            camera.position.set( 50, 10, 0 );
+            // var camera = new THREE.OrthographicCamera( -1, 1, 1, -1, 1, 1000 );
+            camera.position.set( 50, 10, 100 );
             var frustumSize = 1000;
 
             var renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true });
@@ -51,11 +51,12 @@ three.js의 기본이 되는 좌표를 핸들링하는 법을 배우고 이를 �
             ];
 
             var resolution = new THREE.Vector2( window.innerWidth, window.innerHeight );
-            var graph = new THREE.Object3D();
-            scene.add( graph );
+            // var graph = new THREE.Object3D();
+            // scene.add( graph );
 
             init()
             render();
+            var mesh;
 
             function makeLine( geo, c ) {
 
@@ -67,13 +68,13 @@ three.js의 기본이 되는 좌표를 핸들링하는 법을 배우고 이를 �
                     color: new THREE.Color( colors[ c ] ),
                     opacity: 1,
                     resolution: resolution,
-                    sizeAttenuation: !false,
-                    lineWidth: .01,
-                    near: camera.near,
-                    far: camera.far
+                    sizeAttenuation: false,
+                    lineWidth: 14,
+                    // near: camera.near,
+                    // far: camera.far
                 });
-                var mesh = new THREE.Mesh( g.geometry, material );
-                graph.add( mesh );
+                mesh = new THREE.Mesh( g.geometry, material );
+                scene.add( mesh );
 
             }
 
@@ -82,6 +83,7 @@ three.js의 기본이 되는 좌표를 핸들링하는 법을 배우고 이를 �
                 createLines();
 
             }
+            var lineAnimation; 
 
             function createLines() {
 
@@ -133,6 +135,8 @@ three.js의 기본이 되는 좌표를 핸들링하는 법을 배우고 이를 �
                 var line = new THREE.Geometry();
                 line.vertices.push( new THREE.Vector3( -30, -30, -30 ) );
                 line.vertices.push( new THREE.Vector3( -30, 30, -30 ) );
+                line.vertices.push( new THREE.Vector3( -30, 40, -30 ) );
+                line.vertices.push( new THREE.Vector3( -20, 40, -30 ) );
                 makeLine( line, 3 );
 
                 var line = new THREE.Geometry();
@@ -166,12 +170,14 @@ three.js의 기본이 되는 좌표를 핸들링하는 법을 배우고 이를 �
 
             window.addEventListener( 'resize', onWindowResize );
 
-            function render() {
+            function render(time) {
+                // console.log(time)
 
                 requestAnimationFrame( render );
                 controls.update();
-                graph.rotation.y += .25 * clock.getDelta();
-
+                // graph.rotation.y += .25 * clock.getDelta();
+                mesh.material.uniforms.visibility.value= (time/4000) % 1.0 ;
+                console.log(mesh.material.uniforms.visibility.value)
                 renderer.render( scene, camera );
 
             }
