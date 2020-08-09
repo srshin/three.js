@@ -54,8 +54,10 @@
 					var textMaterial = new THREE.MeshBasicMaterial( { color: 0xaaaaaa } );
 
 					var mesh = new THREE.Mesh( textGeo, textMaterial );
-					mesh.position.x = centerOffset;
-					mesh.position.y = 0;
+					mesh.position.x = centerOffset-2;
+                    mesh.position.y = 0;
+                    mesh.rotation.z -= THREE.Math.degToRad(10);
+                    
 					
 					scene.add( mesh );
 				} ); //end load function
