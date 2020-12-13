@@ -129,7 +129,7 @@
 				scene.add( cameraOrtho );
 
 				camera = cameraOrtho;
-
+                camera.up.set( 0, 0, 1 );
 				controlsPerspective = new OrbitControls( cameraPerspective, renderer.domElement );
 				// controlsPerspective.minDistance = 10;
 				// controlsPerspective.maxDistance = 200;
@@ -140,7 +140,8 @@
 				// controlsOrtho.minZoom = 0.5;
 				// controlsOrtho.maxZoom = 1.5;
                 controlsOrtho.enablePan = false;
-                controlsOrtho.enableRotate = false;
+
+                // controlsOrtho.enableRotate = false;
                 
 				controlsOrtho.enableDamping = true;
 
@@ -187,7 +188,7 @@
                 var line = new THREE.Geometry();
                 line.vertices.push( new THREE.Vector3( -3, -3, 0 ) );
                 line.vertices.push( new THREE.Vector3( 3, -3, 0 ) );
-                makeLine( line, 3 );
+                // makeLine( line, 3 );
 
 
 				window.addEventListener( 'resize', onWindowResize, false );
@@ -251,15 +252,15 @@
 
 					case 'perspective':
 						camera = cameraPerspective;
+				controlsPerspective.update();
 						break;
 					case 'ortho':
 						camera = cameraOrtho;
+				controlsOrtho.update(); // must update both controls for damping to complete
 						break;
 
 				}
 
-				controlsPerspective.update();
-				controlsOrtho.update(); // must update both controls for damping to complete
 
 				renderer.render( scene, camera );
 

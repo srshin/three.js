@@ -52,7 +52,16 @@
 				scene.add( camera );
 
 				var light = new THREE.PointLight( 0xffffff, 0.8 );
-				camera.add( light );
+                camera.add( light );
+                
+                var helper = new THREE.GridHelper( 200, 10 );
+                helper.rotation.x = Math.PI / 2;
+                scene.add( helper );
+            
+                //add axes helper
+                // The X axis is red. The Y axis is green. The Z axis is blue.
+                var axesHelper = new THREE.AxesHelper(500);
+                scene.add( axesHelper );				
 
 				group = new THREE.Group();
 				group.position.y = 50;
@@ -110,7 +119,7 @@
 					shape.autoClose = true;
 
 					var points = shape.getPoints();
-					var spacedPoints = shape.getSpacedPoints( 50 );
+					var spacedPoints = shape.getSpacedPoints( 200 );
 
 					var geometryPoints = new THREE.BufferGeometry().setFromPoints( points );
 					var geometrySpacedPoints = new THREE.BufferGeometry().setFromPoints( spacedPoints );
@@ -133,7 +142,7 @@
 
 					// vertices from real points
 
-					var particles = new THREE.Points( geometryPoints, new THREE.PointsMaterial( { color: color, size: 4 } ) );
+					var particles = new THREE.Points( geometryPoints, new THREE.PointsMaterial( { color: color, size: 20 } ) );
 					particles.position.set( x, y, z + 75 );
 					particles.rotation.set( rx, ry, rz );
 					particles.scale.set( s, s, s );

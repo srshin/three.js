@@ -38,16 +38,18 @@
 				//light 추가 
 				const color = 0xFFFFFF;
 				const intensity = 1;
-				const light = new THREE.DirectionalLight(color, intensity);
-				light.position.set(-1, 2, 4);
-                // scene.add(light);
+				// const light = new THREE.DirectionalLight(color, intensity);
+				// light.position.set(-1, 2, 4);
+                const light = new THREE.AmbientLight(color, intensity);
+                scene.add(light);
                 var plight = new THREE.PointLight( 0xffffff, 0.8 );
 				camera.add( plight );
 
-				const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
+				const geometry = new THREE.BoxBufferGeometry(2, 2, 3);
 				//mesh 추가
-				const texture = new  THREE.TextureLoader().load('../examples/textures/brick_bump.jpg');
-				let material =  new THREE.MeshBasicMaterial({map: texture});
+				const texture = new  THREE.TextureLoader().load('dog-1895260_640.png');
+                let material = new THREE.MeshLambertMaterial({color: 0xeeeeee, map: texture});
+
 				mesh = new THREE.Mesh(geometry, material)	
 				scene.add( mesh );
 
@@ -81,8 +83,8 @@
 
 			function animate() {
 				requestAnimationFrame( animate );
-				mesh.rotation.x += 0.01;
-				mesh.rotation.y += 0.01;
+				// mesh.rotation.x += 0.01;
+				// mesh.rotation.y += 0.01;
 
 				render();
 			}

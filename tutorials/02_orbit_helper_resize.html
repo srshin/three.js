@@ -41,9 +41,10 @@ three.js에서 마우스를 컨트롤하는 orbit control 사용법과
 			//add orbit control 
 			var controls = new OrbitControls( camera, renderer.domElement );
             controls.target.set( 0, 0, 0 );
-            controls.minAzimuthAngle = - Math.PI/2; // radians
-        	controls.maxAzimuthAngle = Math.PI/2; // radians
-
+            controls.minAzimuthAngle = - Math.PI/3; // radians
+        	controls.maxAzimuthAngle = Math.PI/3; // radians
+            controls.maxPolarAngle = Math.PI/1.1;
+            controls.minPolarAngle = Math.PI/2;
 			controls.update();
 
 			//add grid helper 
